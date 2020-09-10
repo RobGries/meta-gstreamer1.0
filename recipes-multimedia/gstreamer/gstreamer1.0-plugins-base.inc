@@ -2,7 +2,7 @@ require gstreamer1.0-plugins.inc
 
 LICENSE = "GPLv2+ & LGPLv2+"
 
-DEPENDS += "iso-codes util-linux zlib"
+DEPENDS += "iso-codes util-linux zlib libopus"
 
 inherit gettext
 
@@ -12,7 +12,7 @@ PACKAGECONFIG ??= " \
     ${GSTREAMER_ORC} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'alsa', 'alsa', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11', '', d)} \
-    gio-unix-2.0 ivorbis ogg pango theora vorbis \
+    gio-unix-2.0 ivorbis ogg pango theora vorbis opus\
 "
 
 X11DEPENDS = "virtual/libx11 libsm libxrender libxv"
@@ -33,6 +33,7 @@ PACKAGECONFIG[x11]          = "${X11ENABLEOPTS},${X11DISABLEOPTS},${X11DEPENDS}"
 
 EXTRA_OECONF += " \
     --enable-zlib \
+    --enable-opus \
 "
 
 CACHED_CONFIGUREVARS_append_x86 = " ac_cv_header_emmintrin_h=no ac_cv_header_xmmintrin_h=no"

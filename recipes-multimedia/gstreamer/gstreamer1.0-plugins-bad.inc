@@ -2,7 +2,7 @@ require gstreamer1.0-plugins.inc
 
 LICENSE = "GPLv2+ & LGPLv2+ & LGPLv2.1+"
 
-DEPENDS += "gstreamer1.0-plugins-base libpng jpeg zbar"
+DEPENDS += "gstreamer1.0-plugins-base libpng jpeg zbar libopus"
 
 inherit gettext bluetooth
 
@@ -139,6 +139,7 @@ EXTRA_OECONF += " \
     --disable-x265 \
     --disable-xvid \
     --enable-zbar \
+    --enable-opus \
     ${@bb.utils.contains("TUNE_FEATURES", "mx32", "--disable-yadif", "", d)} \
 "
 
