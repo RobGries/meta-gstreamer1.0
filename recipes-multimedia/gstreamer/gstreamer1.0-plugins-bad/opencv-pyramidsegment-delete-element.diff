@@ -1,0 +1,560 @@
+diff --git a/docs/plugins/Makefile.am b/docs/plugins/Makefile.am
+index 7607b558fd42589a4ff6a5598d9a1656e39a0702..41047170252cf5d7144b8efda8db015a4a38ad35 100644
+--- a/docs/plugins/Makefile.am
++++ b/docs/plugins/Makefile.am
+@@ -94,7 +94,6 @@ EXTRA_HFILES = \
+ 	$(top_srcdir)/ext/opencv/gstedgedetect.h \
+ 	$(top_srcdir)/ext/opencv/gstfaceblur.h \
+ 	$(top_srcdir)/ext/opencv/gstfacedetect.h \
+-	$(top_srcdir)/ext/opencv/gstpyramidsegment.h \
+ 	$(top_srcdir)/ext/opencv/gsttemplatematch.h \
+ 	$(top_srcdir)/ext/opencv/gsttextoverlay.h \
+ 	$(top_srcdir)/ext/openni2/gstopenni2src.h \
+diff --git a/docs/plugins/gst-plugins-bad-plugins-docs.sgml b/docs/plugins/gst-plugins-bad-plugins-docs.sgml
+index 710ced52a70c449c989e5919bbb9765be1052423..a112be7d786a5e32a9a5e743b79ca264650575b6 100644
+--- a/docs/plugins/gst-plugins-bad-plugins-docs.sgml
++++ b/docs/plugins/gst-plugins-bad-plugins-docs.sgml
+@@ -75,7 +75,6 @@
+     <xi:include href="xml/element-openalsink.xml" />
+     <xi:include href="xml/element-pcapparse.xml" />
+     <xi:include href="xml/element-pinch.xml" />
+-    <xi:include href="xml/element-pyramidsegment.xml" />
+     <xi:include href="xml/element-rfbsrc.xml" />
+     <xi:include href="xml/element-rtmpsink.xml" />
+     <xi:include href="xml/element-rtmpsrc.xml" />
+diff --git a/docs/plugins/gst-plugins-bad-plugins-sections.txt b/docs/plugins/gst-plugins-bad-plugins-sections.txt
+index 2c1365b1dfd24d6b1b3cc83ed5397571377855d3..4b5dcd6690a5fedda6b124699a4b0594216f45f7 100644
+--- a/docs/plugins/gst-plugins-bad-plugins-sections.txt
++++ b/docs/plugins/gst-plugins-bad-plugins-sections.txt
+@@ -1133,20 +1133,6 @@ gst_pinch_get_type
+ gst_pinch_plugin_init
+ </SECTION>
+ 
+-<FILE>element-pyramidsegment</FILE>
+-<TITLE>pyramidsegment</TITLE>
+-Gstpyramidsegment
+-<SUBSECTION Standard>
+-GstpyramidsegmentClass
+-GST_PYRAMIDSEGMENT
+-GST_PYRAMIDSEGMENT_CLASS
+-GST_TYPE_PYRAMIDSEGMENT
+-GST_IS_PYRAMIDSEGMENT
+-GST_IS_PYRAMIDSEGMENT_CLASS
+-gst_pyramidsegment_get_type
+-gst_pyramidsegment_plugin_init
+-</SECTION>
+-
+ <SECTION>
+ <FILE>element-rfbsrc</FILE>
+ <TITLE>rfbsrc</TITLE>
+diff --git a/docs/plugins/gst-plugins-bad-plugins.args b/docs/plugins/gst-plugins-bad-plugins.args
+index 0bdbfbd0f5d4dac23d85fe5e7f356a864a2736da..21c4ed7fb4b773662ee38aed4bee0e424d62deee 100644
+--- a/docs/plugins/gst-plugins-bad-plugins.args
++++ b/docs/plugins/gst-plugins-bad-plugins.args
+@@ -46908,46 +46908,6 @@
+ <DEFAULT>NULL</DEFAULT>
+ </ARG>
+ 
+-<ARG>
+-<NAME>Gstpyramidsegment::level</NAME>
+-<TYPE>gint</TYPE>
+-<RANGE>[0,4]</RANGE>
+-<FLAGS>rw</FLAGS>
+-<NICK>Level</NICK>
+-<BLURB>Maximum level of the pyramid segmentation.</BLURB>
+-<DEFAULT>4</DEFAULT>
+-</ARG>
+-
+-<ARG>
+-<NAME>Gstpyramidsegment::silent</NAME>
+-<TYPE>gboolean</TYPE>
+-<RANGE></RANGE>
+-<FLAGS>rw</FLAGS>
+-<NICK>Silent</NICK>
+-<BLURB>Produce verbose output ?.</BLURB>
+-<DEFAULT>FALSE</DEFAULT>
+-</ARG>
+-
+-<ARG>
+-<NAME>Gstpyramidsegment::threshold1</NAME>
+-<TYPE>gdouble</TYPE>
+-<RANGE>[0,1000]</RANGE>
+-<FLAGS>rw</FLAGS>
+-<NICK>Threshold1</NICK>
+-<BLURB>Error threshold for establishing links.</BLURB>
+-<DEFAULT>50</DEFAULT>
+-</ARG>
+-
+-<ARG>
+-<NAME>Gstpyramidsegment::threshold2</NAME>
+-<TYPE>gdouble</TYPE>
+-<RANGE>[0,1000]</RANGE>
+-<FLAGS>rw</FLAGS>
+-<NICK>Threshold2</NICK>
+-<BLURB>Error threshold for segment clustering.</BLURB>
+-<DEFAULT>60</DEFAULT>
+-</ARG>
+-
+ <ARG>
+ <NAME>Gstfacedetect::display</NAME>
+ <TYPE>gboolean</TYPE>
+diff --git a/docs/plugins/inspect/plugin-opencv.xml b/docs/plugins/inspect/plugin-opencv.xml
+index 9bf44e435b85f25eeb1e8b0591986acbb318dfc1..53efd054da10b68383b5daf27a2298df94fc0cab 100644
+--- a/docs/plugins/inspect/plugin-opencv.xml
++++ b/docs/plugins/inspect/plugin-opencv.xml
+@@ -305,27 +305,6 @@ IF nothing is present, then nothing is done.</description>
+         </caps>
+       </pads>
+     </element>
+-    <element>
+-      <name>pyramidsegment</name>
+-      <longname>pyramidsegment</longname>
+-      <class>Filter/Effect/Video</class>
+-      <description>Applies pyramid segmentation to a video or image.</description>
+-      <author>Michael Sheldon &lt;mike@mikeasoft.com&gt;</author>
+-      <pads>
+-        <caps>
+-          <name>sink</name>
+-          <direction>sink</direction>
+-          <presence>always</presence>
+-          <details>video/x-raw, format=(string)RGB, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</details>
+-        </caps>
+-        <caps>
+-          <name>src</name>
+-          <direction>source</direction>
+-          <presence>always</presence>
+-          <details>video/x-raw, format=(string)RGB, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</details>
+-        </caps>
+-      </pads>
+-    </element>
+     <element>
+       <name>retinex</name>
+       <longname>Retinex image colour enhacement</longname>
+@@ -411,4 +390,4 @@ IF nothing is present, then nothing is done.</description>
+       </pads>
+     </element>
+   </elements>
+-</plugin>
+\ No newline at end of file
++</plugin>
+diff --git a/ext/opencv/Makefile.am b/ext/opencv/Makefile.am
+index 0eee38c450d584f057ecec8a95df198921f63ba0..360d4abd201c6c6db29a7dc4d7f74933a8773a13 100644
+--- a/ext/opencv/Makefile.am
++++ b/ext/opencv/Makefile.am
+@@ -14,7 +14,6 @@ libgstopencv_la_SOURCES = gstopencv.cpp \
+ 			gstedgedetect.cpp \
+ 			gstfaceblur.cpp \
+ 			gsthanddetect.cpp \
+-			gstpyramidsegment.cpp \
+ 			gsttemplatematch.cpp \
+ 			gsttextoverlay.cpp \
+ 			gstmotioncells.cpp \
+@@ -59,7 +58,6 @@ noinst_HEADERS = gstopencvvideofilter.h gstopencvutils.h \
+ 		gstfaceblur.h \
+ 		gstfacedetect.h \
+ 		gsthanddetect.h \
+-		gstpyramidsegment.h \
+ 		gsttemplatematch.h \
+ 		gsttextoverlay.h \
+ 		gstskindetect.h \
+diff --git a/ext/opencv/gstopencv.cpp b/ext/opencv/gstopencv.cpp
+index 4077ba6e2ca8b52f0404f98de0e26d780d2c07bc..8f50cd88a5f12947a9be6b905e5b20006346e701 100644
+--- a/ext/opencv/gstopencv.cpp
++++ b/ext/opencv/gstopencv.cpp
+@@ -33,7 +33,6 @@
+ #include "gstfaceblur.h"
+ #include "gstfacedetect.h"
+ #include "gstmotioncells.h"
+-#include "gstpyramidsegment.h"
+ #include "gsttemplatematch.h"
+ #include "gsttextoverlay.h"
+ #include "gsthanddetect.h"
+@@ -76,9 +75,6 @@ plugin_init (GstPlugin * plugin)
+   if (!gst_motion_cells_plugin_init (plugin))
+     return FALSE;
+ 
+-  if (!gst_pyramid_segment_plugin_init (plugin))
+-    return FALSE;
+-
+   if (!gst_template_match_plugin_init (plugin))
+     return FALSE;
+ 
+diff --git a/ext/opencv/gstpyramidsegment.cpp b/ext/opencv/gstpyramidsegment.cpp
+deleted file mode 100644
+index fae3cf6aad90d0ad5c00721872de0b1200ba5f2f..0000000000000000000000000000000000000000
+--- a/ext/opencv/gstpyramidsegment.cpp
++++ /dev/null
+@@ -1,271 +0,0 @@
+-/*
+- * GStreamer
+- * Copyright (C) 2005 Thomas Vander Stichele <thomas@apestaart.org>
+- * Copyright (C) 2005 Ronald S. Bultje <rbultje@ronald.bitfreak.net>
+- * Copyright (C) 2008 Michael Sheldon <mike@mikeasoft.com>
+- *
+- * Permission is hereby granted, free of charge, to any person obtaining a
+- * copy of this software and associated documentation files (the "Software"),
+- * to deal in the Software without restriction, including without limitation
+- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+- * and/or sell copies of the Software, and to permit persons to whom the
+- * Software is furnished to do so, subject to the following conditions:
+- *
+- * The above copyright notice and this permission notice shall be included in
+- * all copies or substantial portions of the Software.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+- * DEALINGS IN THE SOFTWARE.
+- *
+- * Alternatively, the contents of this file may be used under the
+- * GNU Lesser General Public License Version 2.1 (the "LGPL"), in
+- * which case the following provisions apply instead of the ones
+- * mentioned above:
+- *
+- * This library is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Library General Public
+- * License as published by the Free Software Foundation; either
+- * version 2 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Library General Public License for more details.
+- *
+- * You should have received a copy of the GNU Library General Public
+- * License along with this library; if not, write to the
+- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+- * Boston, MA 02110-1301, USA.
+- */
+-
+-/**
+- * SECTION:element-pyramidsegment
+- *
+- * Applies pyramid segmentation to a video or image.
+- *
+- * <refsect2>
+- * <title>Example launch line</title>
+- * |[
+- * gst-launch-1.0 -v videotestsrc ! pyramidsegment ! videoconvert ! autovideosink
+- * ]|
+- * </refsect2>
+- */
+-
+-#ifdef HAVE_CONFIG_H
+-#  include <config.h>
+-#endif
+-
+-#include "gstpyramidsegment.h"
+-
+-#define BLOCK_SIZE 1000
+-
+-GST_DEBUG_CATEGORY_STATIC (gst_pyramid_segment_debug);
+-#define GST_CAT_DEFAULT gst_pyramid_segment_debug
+-
+-using namespace cv;
+-/* Filter signals and args */
+-enum
+-{
+-  /* FILL ME */
+-  LAST_SIGNAL
+-};
+-
+-enum
+-{
+-  PROP_0,
+-  PROP_SILENT,
+-  PROP_THRESHOLD1,
+-  PROP_THRESHOLD2,
+-  PROP_LEVEL
+-};
+-
+-/* the capabilities of the inputs and outputs.
+- *
+- * describe the real formats here.
+- */
+-static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE ("sink",
+-    GST_PAD_SINK,
+-    GST_PAD_ALWAYS,
+-    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("RGB"))
+-    );
+-
+-static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
+-    GST_PAD_SRC,
+-    GST_PAD_ALWAYS,
+-    GST_STATIC_CAPS (GST_VIDEO_CAPS_MAKE ("RGB"))
+-    );
+-
+-G_DEFINE_TYPE (GstPyramidSegment, gst_pyramid_segment,
+-    GST_TYPE_OPENCV_VIDEO_FILTER);
+-
+-static void gst_pyramid_segment_set_property (GObject * object, guint prop_id,
+-    const GValue * value, GParamSpec * pspec);
+-static void gst_pyramid_segment_get_property (GObject * object, guint prop_id,
+-    GValue * value, GParamSpec * pspec);
+-
+-static GstFlowReturn gst_pyramid_segment_transform_ip (GstOpencvVideoFilter *
+-    base, GstBuffer * buf, IplImage * img);
+-
+-/* Clean up */
+-static void
+-gst_pyramid_segment_finalize (GObject * obj)
+-{
+-  GstPyramidSegment *filter = GST_PYRAMID_SEGMENT (obj);
+-
+-  cvReleaseMemStorage (&filter->storage);
+-
+-  G_OBJECT_CLASS (gst_pyramid_segment_parent_class)->finalize (obj);
+-}
+-
+-/* initialize the pyramidsegment's class */
+-static void
+-gst_pyramid_segment_class_init (GstPyramidSegmentClass * klass)
+-{
+-  GObjectClass *gobject_class;
+-  GstOpencvVideoFilterClass *gstopencvbasefilter_class;
+-
+-  GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
+-  gobject_class = (GObjectClass *) klass;
+-  gstopencvbasefilter_class = (GstOpencvVideoFilterClass *) klass;
+-
+-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_pyramid_segment_finalize);
+-  gobject_class->set_property = gst_pyramid_segment_set_property;
+-  gobject_class->get_property = gst_pyramid_segment_get_property;
+-
+-  gstopencvbasefilter_class->cv_trans_ip_func =
+-      gst_pyramid_segment_transform_ip;
+-
+-  g_object_class_install_property (gobject_class, PROP_SILENT,
+-      g_param_spec_boolean ("silent", "Silent", "Produce verbose output ?",
+-          FALSE, (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+-
+-  g_object_class_install_property (gobject_class, PROP_THRESHOLD1,
+-      g_param_spec_double ("threshold1", "Threshold1",
+-          "Error threshold for establishing links", 0, 1000, 50,
+-          (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+-
+-  g_object_class_install_property (gobject_class, PROP_THRESHOLD2,
+-      g_param_spec_double ("threshold2", "Threshold2",
+-          "Error threshold for segment clustering", 0, 1000, 60,
+-          (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+-
+-  g_object_class_install_property (gobject_class, PROP_LEVEL,
+-      g_param_spec_int ("level", "Level",
+-          "Maximum level of the pyramid segmentation", 1, 4, 4,
+-          (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+-
+-  gst_element_class_set_static_metadata (element_class,
+-      "pyramidsegment",
+-      "Filter/Effect/Video",
+-      "Applies pyramid segmentation to a video or image.",
+-      "Michael Sheldon <mike@mikeasoft.com>");
+-
+-  gst_element_class_add_static_pad_template (element_class, &src_factory);
+-  gst_element_class_add_static_pad_template (element_class, &sink_factory);
+-}
+-
+-/* initialize the new element
+- * instantiate pads and add them to element
+- * set pad calback functions
+- * initialize instance structure
+- */
+-static void
+-gst_pyramid_segment_init (GstPyramidSegment * filter)
+-{
+-  filter->storage = cvCreateMemStorage (BLOCK_SIZE);
+-  filter->comp =
+-      cvCreateSeq (0, sizeof (CvSeq), sizeof (CvPoint), filter->storage);
+-  filter->silent = FALSE;
+-  filter->threshold1 = 50.0;
+-  filter->threshold2 = 60.0;
+-  filter->level = 4;
+-
+-  gst_opencv_video_filter_set_in_place (GST_OPENCV_VIDEO_FILTER_CAST (filter),
+-      TRUE);
+-}
+-
+-static void
+-gst_pyramid_segment_set_property (GObject * object, guint prop_id,
+-    const GValue * value, GParamSpec * pspec)
+-{
+-  GstPyramidSegment *filter = GST_PYRAMID_SEGMENT (object);
+-
+-  switch (prop_id) {
+-    case PROP_SILENT:
+-      filter->silent = g_value_get_boolean (value);
+-      break;
+-    case PROP_THRESHOLD1:
+-      filter->threshold1 = g_value_get_double (value);
+-      break;
+-    case PROP_THRESHOLD2:
+-      filter->threshold2 = g_value_get_double (value);
+-      break;
+-    case PROP_LEVEL:
+-      filter->level = g_value_get_int (value);
+-      break;
+-    default:
+-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+-      break;
+-  }
+-}
+-
+-static void
+-gst_pyramid_segment_get_property (GObject * object, guint prop_id,
+-    GValue * value, GParamSpec * pspec)
+-{
+-  GstPyramidSegment *filter = GST_PYRAMID_SEGMENT (object);
+-
+-  switch (prop_id) {
+-    case PROP_SILENT:
+-      g_value_set_boolean (value, filter->silent);
+-      break;
+-    case PROP_THRESHOLD1:
+-      g_value_set_double (value, filter->threshold1);
+-      break;
+-    case PROP_THRESHOLD2:
+-      g_value_set_double (value, filter->threshold2);
+-      break;
+-    case PROP_LEVEL:
+-      g_value_set_int (value, filter->level);
+-      break;
+-    default:
+-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+-      break;
+-  }
+-}
+-
+-/* transform function
+- * this function does the actual processing
+- */
+-static GstFlowReturn
+-gst_pyramid_segment_transform_ip (GstOpencvVideoFilter * base, GstBuffer * buf,
+-    IplImage * img)
+-{
+-  GstPyramidSegment *filter = GST_PYRAMID_SEGMENT (base);
+-
+-  cvPyrSegmentation (img, img, filter->storage,
+-      &(filter->comp), filter->level, filter->threshold1, filter->threshold2);
+-
+-  return GST_FLOW_OK;
+-}
+-
+-
+-/* entry point to initialize the plug-in
+- * initialize the plug-in itself
+- * register the element factories and other features
+- */
+-gboolean
+-gst_pyramid_segment_plugin_init (GstPlugin * plugin)
+-{
+-  /* debug category for fltering log messages */
+-  GST_DEBUG_CATEGORY_INIT (gst_pyramid_segment_debug, "pyramidsegment",
+-      0, "Applies pyramid segmentation to a video or image");
+-
+-  return gst_element_register (plugin, "pyramidsegment", GST_RANK_NONE,
+-      GST_TYPE_PYRAMID_SEGMENT);
+-}
+diff --git a/ext/opencv/gstpyramidsegment.h b/ext/opencv/gstpyramidsegment.h
+deleted file mode 100644
+index e7157660911b1c52e78e9e1362df9b2d1ca9cef3..0000000000000000000000000000000000000000
+--- a/ext/opencv/gstpyramidsegment.h
++++ /dev/null
+@@ -1,96 +0,0 @@
+-/*
+- * GStreamer
+- * Copyright (C) 2005 Thomas Vander Stichele <thomas@apestaart.org>
+- * Copyright (C) 2005 Ronald S. Bultje <rbultje@ronald.bitfreak.net>
+- * Copyright (C) 2008 Michael Sheldon <mike@mikeasoft.com>
+- *
+- * Permission is hereby granted, free of charge, to any person obtaining a
+- * copy of this software and associated documentation files (the "Software"),
+- * to deal in the Software without restriction, including without limitation
+- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+- * and/or sell copies of the Software, and to permit persons to whom the
+- * Software is furnished to do so, subject to the following conditions:
+- *
+- * The above copyright notice and this permission notice shall be included in
+- * all copies or substantial portions of the Software.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+- * DEALINGS IN THE SOFTWARE.
+- *
+- * Alternatively, the contents of this file may be used under the
+- * GNU Lesser General Public License Version 2.1 (the "LGPL"), in
+- * which case the following provisions apply instead of the ones
+- * mentioned above:
+- *
+- * This library is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Library General Public
+- * License as published by the Free Software Foundation; either
+- * version 2 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Library General Public License for more details.
+- *
+- * You should have received a copy of the GNU Library General Public
+- * License along with this library; if not, write to the
+- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+- * Boston, MA 02110-1301, USA.
+- */
+-
+-#ifndef __GST_PYRAMID_SEGMENT_H__
+-#define __GST_PYRAMID_SEGMENT_H__
+-
+-#include <gstopencvvideofilter.h>
+-#include <opencv2/core/version.hpp>
+-#include <opencv2/legacy/legacy.hpp>
+-
+-G_BEGIN_DECLS
+-/* #defines don't like whitespacey bits */
+-#define GST_TYPE_PYRAMID_SEGMENT \
+-  (gst_pyramid_segment_get_type())
+-#define GST_PYRAMID_SEGMENT(obj) \
+-  (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_PYRAMID_SEGMENT,GstPyramidSegment))
+-#define GST_PYRAMID_SEGMENT_CLASS(klass) \
+-  (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_PYRAMID_SEGMENT,GstPyramidSegmentClass))
+-#define GST_IS_PYRAMID_SEGMENT(obj) \
+-  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_PYRAMID_SEGMENT))
+-#define GST_IS_PYRAMID_SEGMENT_CLASS(klass) \
+-  (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_PYRAMID_SEGMENT))
+-
+-typedef struct _GstPyramidSegment GstPyramidSegment;
+-typedef struct _GstPyramidSegmentClass GstPyramidSegmentClass;
+-
+-struct _GstPyramidSegment
+-{
+-  GstOpencvVideoFilter element;
+-
+-  GstPad *sinkpad, *srcpad;
+-
+-  gboolean silent;
+-
+-  CvMemStorage *storage;
+-
+-  CvSeq *comp;
+-
+-  double threshold1, threshold2;
+-
+-  int level;
+-};
+-
+-struct _GstPyramidSegmentClass
+-{
+-  GstOpencvVideoFilterClass parent_class;
+-};
+-
+-GType gst_pyramid_segment_get_type (void);
+-
+-gboolean gst_pyramid_segment_plugin_init (GstPlugin * plugin);
+-
+-G_END_DECLS
+-#endif /* __GST_PYRAMID_SEGMENT_H__ */
